@@ -143,6 +143,29 @@ describe("loadMarshal", () => {
     expect(results).toEqual(testCases);
   });
 
+  it("loads symbols", () => {
+    const testCases: [unknown, number[]][] = [
+      ["a", [4, 8, 58, 6, 97]],
+      ["@foobar", [4, 8, 58, 12, 64, 102, 111, 111, 98, 97, 114]],
+      ["あ", [4, 8, 58, 8, 227, 129, 130]],
+      ["あ", [4, 8, 73, 58, 8, 227, 129, 130, 6, 58, 6, 69, 84]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
+  it("loads symbol references", () => {
+    const testCases: [unknown, number[]][] = [
+      [["a", "b", "a", "b"], [4, 8, 91, 9, 58, 6, 97, 58, 6, 98, 59, 0, 59, 6]],
+      [["a", "b", "b", "a"], [4, 8, 91, 9, 58, 6, 97, 58, 6, 98, 59, 6, 59, 0]],
+      [["a", "a", "b", "b"], [4, 8, 91, 9, 58, 6, 97, 59, 0, 58, 6, 98, 59, 6]],
+      [["foo", "E"], [4, 8, 91, 7, 73, 34, 8, 102, 111, 111, 6, 58, 6, 69, 84, 59, 0]],
+      [["E", "foo"], [4, 8, 91, 7, 58, 6, 69, 73, 34, 8, 102, 111, 111, 6, 59, 0, 84]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
   it("fails on EOF", () => {
     const testCases: [number[], string][] = [
       [[], "Marshal error: unexpected EOF"],
