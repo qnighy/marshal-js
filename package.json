@@ -5,12 +5,34 @@
   "license": "MIT",
   "homepage": "https://github.com/qnighy/marshal-js",
   "author": "Masaki Hara <ackie.h.gmai@gmail.com>",
+  "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "node": "./dist/index.js",
+    "default": "./dist/esm/index.js"
+  },
   "scripts": {
+    "build": "$npm_execpath run build:babel && $npm_execpath run build:tsc",
+    "build:babel": "babel src --out-dir dist --extensions \".ts\" --ignore \"src/**/*.test.ts\"",
+    "build:babel:esm": "babel src --out-dir dist/esm --extensions \".ts\" --ignore \"src/**/*.test.ts\" --config-file ./babel.config.esm.js",
     "build:tsc": "tsc -p tsconfig.build.json",
+    "prepack": "$npm_execpath run build",
     "tsc": "tsc"
   },
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.14.9"
+  },
   "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@babel/plugin-transform-runtime": "^7.14.5",
+    "@babel/preset-env": "^7.14.9",
+    "@babel/preset-typescript": "^7.14.5",
     "@types/node": "^16.4.11",
     "typescript": "^4.3.5"
-  }
+  },
+  "browserslist": [
+    "defaults"
+  ]
 }
