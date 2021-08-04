@@ -1,3 +1,9 @@
+export class MarshalError extends Error {
+  constructor(message?: string) {
+    super(`Marshal error: ${message}`);
+  }
+}
+
 export function loadMarshal(buf: Buffer): unknown {
   return new Parser(buf).read();
 }
@@ -17,7 +23,7 @@ class Parser {
     const major = this.readByte();
     const minor = this.readByte();
     if (major !== 4 || minor > 8) {
-      throw new Error(`Marshal error: unexpected version: ${major}.${minor}`);
+      throw new MarshalError(`unexpected version: ${major}.${minor}`);
     }
     return this.readAny();
   }
@@ -48,7 +54,7 @@ class Parser {
       case 0x3B: {
         const symref = this.readInt();
         if (symref < 0 || symref >= this.symbols.length) {
-          throw new Error("Marshal error: invalid symbol reference");
+          throw new MarshalError("invalid symbol reference");
         }
         return this.symbols[symref];
       }
@@ -56,7 +62,7 @@ class Parser {
       case 0x40: {
         const objref = this.readInt();
         if (objref < 0 || objref >= this.symbols.length) {
-          throw new Error("Marshal error: invalid symbol reference");
+          throw new MarshalError("invalid symbol reference");
         }
         return this.objects[objref];
       }
@@ -129,10 +135,10 @@ class Parser {
       }
       // 'd': TYPE_DATA
       case 0x64:
-        throw new Error("Marshal error: unimplemented: TYPE_DATA");
+        throw new MarshalError("unimplemented: TYPE_DATA");
       // 'e': TYPE_EXTENDED
       case 0x65:
-        throw new Error("Marshal error: unimplemented: TYPE_EXTENDED");
+        throw new MarshalError("unimplemented: TYPE_EXTENDED");
       // 'f': an instance of Float
       case 0x66: {
         return this.entry(parseFloat(this.readString()));
@@ -144,7 +150,7 @@ class Parser {
       case 0x6C: {
         const signChar = this.readByte();
         if (signChar !== 0x2B && signChar !== 0x2D) {
-          throw new Error("Marshal error: invalid sign");
+          throw new MarshalError("invalid sign");
         }
         const length = this.readLength() * 2;
         let sum = 0;
@@ -208,14 +214,14 @@ class Parser {
         return hash;
       }
       default:
-        throw new Error(`Marshal error: unexpected tag: ${tag}`);
+        throw new MarshalError(`unexpected tag: ${tag}`);
     }
   }
 
   private readLength(): number {
     const length = this.readInt();
     if (length < 0) {
-      throw new Error("Marshal error: negative length");
+      throw new MarshalError("negative length");
     }
     return length;
   }
@@ -247,7 +253,7 @@ class Parser {
 
   private readByte(): number {
     if (this.index >= this.buf.byteLength) {
-      throw new Error("Marshal error: unexpected EOF");
+      throw new MarshalError("unexpected EOF");
     }
     const byte = this.buf.readUInt8(this.index);
     this.index++;
@@ -261,7 +267,7 @@ class Parser {
   private readBytes(): Buffer {
     const length = this.readInt();
     if (this.index + length > this.buf.byteLength) {
-      throw new Error("Marshal error: unexpected EOF");
+      throw new MarshalError("unexpected EOF");
     }
     const bytes = this.buf.slice(this.index, this.index + length);
     this.index += length;

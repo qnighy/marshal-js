@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { loadMarshal } from "./index";
+import { loadMarshal, MarshalError } from "./index";
 
 describe("loadMarshal", () => {
   it("loads nil, false, and true", () => {
@@ -142,4 +142,57 @@ describe("loadMarshal", () => {
     const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
     expect(results).toEqual(testCases);
   });
+
+  it("fails on EOF", () => {
+    const testCases: [number[], string][] = [
+      [[], "Marshal error: unexpected EOF"],
+      [[4], "Marshal error: unexpected EOF"],
+      [[4, 8], "Marshal error: unexpected EOF"],
+      [[4, 8, 105], "Marshal error: unexpected EOF"],
+      [[4, 8, 105, 1], "Marshal error: unexpected EOF"],
+      [[4, 8, 105, 2, 0], "Marshal error: unexpected EOF"],
+    ];
+    const results = testCases.map(([input]) => {
+      try {
+        loadMarshal(Buffer.from(input));
+        return [input, "--SUCCESS--"];
+      } catch(err) {
+        if (err instanceof MarshalError) {
+          return [input, err.message];
+        }
+        throw err;
+      }
+    });
+    expect(results).toEqual(testCases);
+  })
+
+  it("loads compatible versions", () => {
+    const testCases: [unknown, number[]][] = [
+      [null, [4, 7, 48]],
+      [false, [4, 6, 70]],
+      [true, [4, 5, 84]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  })
+
+  it("fails on incompatible versions", () => {
+    const testCases: [number[], string][] = [
+      [[4, 9, 48], "Marshal error: unexpected version: 4.9"],
+      [[5, 8, 48], "Marshal error: unexpected verison: 5.8"],
+      [[3, 8, 48], "Marshal error: unexpected version: 3.8"],
+    ];
+    const results = testCases.map(([input]) => {
+      try {
+        loadMarshal(Buffer.from(input));
+        return [input, "--SUCCESS--"];
+      } catch(err) {
+        if (err instanceof MarshalError) {
+          return [input, err.message];
+        }
+        throw err;
+      }
+    });
+    expect(results).toEqual(testCases);
+  })
 });
