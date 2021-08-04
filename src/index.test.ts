@@ -179,7 +179,7 @@ describe("loadMarshal", () => {
   it("fails on incompatible versions", () => {
     const testCases: [number[], string][] = [
       [[4, 9, 48], "Marshal error: unexpected version: 4.9"],
-      [[5, 8, 48], "Marshal error: unexpected verison: 5.8"],
+      [[5, 8, 48], "Marshal error: unexpected version: 5.8"],
       [[3, 8, 48], "Marshal error: unexpected version: 3.8"],
     ];
     const results = testCases.map(([input]) => {
