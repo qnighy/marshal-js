@@ -32,7 +32,7 @@ class Parser {
       case 0x2F: {
         const source = this.readString();
         // Discard flags
-        this.readInt();
+        this.readByte();
         return this.entry(new RegExp(source));
       }
       // '0': nil
@@ -204,8 +204,7 @@ class Parser {
 	  // @ts-expect-error
           hash[key.toString()] = value;
         }
-        // Discard default value
-        this.readAny();
+        hash['__ruby_default'] = this.readAny();
         return hash;
       }
       default:
