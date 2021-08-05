@@ -20,6 +20,8 @@
     "fmt": "$npm_execpath run fmt:runprettier -w",
     "fmt:check": "$npm_execpath run fmt:runprettier -c",
     "fmt:runprettier": "prettier src/**/*.ts",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "$npm_execpath run lint --fix",
     "prepack": "$npm_execpath run build",
     "test": "jest",
     "tsc": "tsc"
@@ -35,6 +37,11 @@
     "@babel/preset-typescript": "^7.14.5",
     "@jest/globals": "^27.0.6",
     "@types/node": "^16.4.11",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest": "^24.4.0",
     "jest": "^27.0.6",
     "prettier": "^2.3.2",
     "typescript": "^4.3.5"

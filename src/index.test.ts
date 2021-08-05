@@ -82,22 +82,6 @@ describe("loadMarshal", () => {
     expect(results).toEqual(testCases);
   });
 
-  it("loads Bignums", () => {
-    const testCases: [unknown, number[]][] = [
-      [12345678901, [4, 8, 108, 43, 8, 53, 28, 220, 223, 2, 0]],
-      [-12345678901, [4, 8, 108, 45, 8, 53, 28, 220, 223, 2, 0]],
-      [1234567890123, [4, 8, 108, 43, 8, 203, 4, 251, 113, 31, 1]],
-      [-1234567890123, [4, 8, 108, 45, 8, 203, 4, 251, 113, 31, 1]],
-      [123456789012345, [4, 8, 108, 43, 8, 121, 223, 13, 134, 72, 112]],
-      [-123456789012345, [4, 8, 108, 45, 8, 121, 223, 13, 134, 72, 112]],
-    ];
-    const results = testCases.map(([, input]) => [
-      Marshal.parse(Buffer.from(input)),
-      input,
-    ]);
-    expect(results).toEqual(testCases);
-  });
-
   it("loads Floats", () => {
     const testCases: [unknown, number[]][] = [
       [0.0, [4, 8, 102, 6, 48]],
@@ -571,7 +555,7 @@ describe("loadMarshal", () => {
     const obj = Marshal.parse(Buffer.from([4, 8, 91, 6, 91, 6, 64, 0]));
     if (!Array.isArray(obj)) throw new Error("Not an array");
     expect(obj.length).toBe(1);
-    const obj2 = obj[0];
+    const obj2: unknown = obj[0];
     if (!Array.isArray(obj2)) throw new Error("Not an array");
     expect(obj2.length).toBe(1);
     expect(obj2[0]).toBe(obj);
@@ -583,7 +567,7 @@ describe("loadMarshal", () => {
     const obj = Marshal.parse(Buffer.from([4, 8, 91, 6, 91, 6, 64, 6]));
     if (!Array.isArray(obj)) throw new Error("Not an array");
     expect(obj.length).toBe(1);
-    const obj2 = obj[0];
+    const obj2: unknown = obj[0];
     if (!Array.isArray(obj2)) throw new Error("Not an array");
     expect(obj2.length).toBe(1);
     expect(obj2[0]).toBe(obj2);
