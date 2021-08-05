@@ -13,7 +13,7 @@ export class MarshalError extends Error {
  * @returns the decoded value
  * @throws {MarshalError} when the data contains an invalid format.
  */
-export function loadMarshal(buf: Buffer): unknown {
+export function parse(buf: Buffer): unknown {
   return new Parser(buf).read();
 }
 
