@@ -32,7 +32,9 @@ class Parser {
     const major = this.readByte();
     const minor = this.readByte();
     if (major !== 4 || minor > 8) {
-      throw new MarshalError(`incompatible marshal file format (can't be read): format version 4.8 required; ${major}.${minor} given`);
+      throw new MarshalError(
+        `incompatible marshal file format (can't be read): format version 4.8 required; ${major}.${minor} given`
+      );
     }
     return this.readAny();
   }
@@ -44,7 +46,7 @@ class Parser {
       case 0x22:
         return this.entry(this.readString());
       // '/': an instance of Regexp
-      case 0x2F: {
+      case 0x2f: {
         const source = this.readString();
         // Discard flags
         this.readByte();
@@ -54,13 +56,13 @@ class Parser {
       case 0x30:
         return null;
       // ':': an instance of Symbol
-      case 0x3A: {
+      case 0x3a: {
         const sym = this.readString();
         this.symbols.push(sym);
         return sym;
       }
       // ';': symbol reference
-      case 0x3B: {
+      case 0x3b: {
         const symref = this.readInt();
         if (symref < 0 || symref >= this.symbols.length) {
           throw new MarshalError("bad symbol");
@@ -96,7 +98,7 @@ class Parser {
         return obj;
       }
       // 'M': a module or class (old format)
-      case 0x4D: {
+      case 0x4d: {
         // Discard class/module name
         this.readBytes();
         return this.entry({});
@@ -130,7 +132,7 @@ class Parser {
         return obj;
       }
       // '[': an instance of Array
-      case 0x5B: {
+      case 0x5b: {
         const length = this.readLength("array");
         const arr: unknown[] = this.entry([]);
         for (let i = 0; i < length; i++) {
@@ -153,18 +155,25 @@ class Parser {
       // 'f': an instance of Float
       case 0x66: {
         const s = this.readString();
-        const f = s === "inf" ? Infinity : s === "-inf" ? -Infinity : s === "nan" ? NaN : parseFloat(s);
+        const f =
+          s === "inf"
+            ? Infinity
+            : s === "-inf"
+            ? -Infinity
+            : s === "nan"
+            ? NaN
+            : parseFloat(s);
         return this.entry(f);
       }
       // 'i': an instance of Integer (small)
       case 0x69:
         return this.readInt();
       // 'l': an instance of Integer (large)
-      case 0x6C: {
+      case 0x6c: {
         const signChar = this.readByte();
         const length = this.readLength("string") * 2;
         let sum = 0;
-        let magnitude = signChar === 0x2D ? -1 : 1;
+        let magnitude = signChar === 0x2d ? -1 : 1;
         for (let i = 0; i < length; i++) {
           sum += this.readByte() * magnitude;
           magnitude *= 256;
@@ -172,13 +181,13 @@ class Parser {
         return this.entry(sum);
       }
       // 'm': a module
-      case 0x6D: {
+      case 0x6d: {
         // Discard module name
         this.readBytes();
         return this.entry({});
       }
       // 'o': a plain object
-      case 0x6F: {
+      case 0x6f: {
         // Discard class name
         this.readAny();
         const obj = this.entry({});
@@ -199,7 +208,7 @@ class Parser {
         return this.entry({});
       }
       // '{': an instance of Hash (without default value)
-      case 0x7B: {
+      case 0x7b: {
         const length = this.readLength("hash");
         const hash: Record<string, unknown> = this.entry({});
         for (let i = 0; i < length; i++) {
@@ -213,7 +222,7 @@ class Parser {
         return hash;
       }
       // '}': an instance of Hash (with default value)
-      case 0x7D: {
+      case 0x7d: {
         const length = this.readLength("hash");
         const hash: Record<string, unknown> = this.entry({});
         for (let i = 0; i < length; i++) {
@@ -224,7 +233,7 @@ class Parser {
             hash[key.toString()] = value;
           }
         }
-        hash['__ruby_default'] = this.readAny();
+        hash["__ruby_default"] = this.readAny();
         return hash;
       }
       default:
@@ -275,7 +284,7 @@ class Parser {
   }
 
   private readString(): string {
-    return this.readBytes().toString('utf-8');
+    return this.readBytes().toString("utf-8");
   }
 
   private readBytes(): Buffer {
