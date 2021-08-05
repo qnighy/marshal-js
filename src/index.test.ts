@@ -85,6 +85,23 @@ describe("loadMarshal", () => {
     expect(results).toEqual(testCases);
   });
 
+  it("loads Floats", () => {
+    const testCases: [unknown, number[]][] = [
+      [0.0, [4, 8, 102, 6, 48]],
+      [-0.0, [4, 8, 102, 7, 45, 48]],
+      [1.0, [4, 8, 102, 6, 49]],
+      [-1.0, [4, 8, 102, 7, 45, 49]],
+      [3.14, [4, 8, 102, 9, 51, 46, 49, 52]],
+      [123456789.0, [4, 8, 102, 14, 49, 50, 51, 52, 53, 54, 55, 56, 57]],
+      [1.23e-25, [4, 8, 102, 13, 49, 46, 50, 51, 101, 45, 50, 53]],
+      [Infinity, [4, 8, 102, 8, 105, 110, 102]],
+      [-Infinity, [4, 8, 102, 9, 45, 105, 110, 102]],
+      [NaN, [4, 8, 102, 8, 110, 97, 110]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
   it("loads Strings", () => {
     const testCases: [unknown, number[]][] = [
       ["", [4, 8, 34, 0]],
@@ -196,6 +213,96 @@ describe("loadMarshal", () => {
     ];
     const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
     expect(results).toEqual(testCases);
+  });
+
+  it("loads primitive objects as empty hashes", () => {
+    const testCases: [unknown, number[]][] = [
+      [{}, [4, 8, 111, 58, 33, 65, 99, 116, 105, 111, 110, 67, 111, 110, 116, 114, 111, 108, 108, 101, 114, 58, 58, 80, 97, 114, 97, 109, 101, 116, 101, 114, 115, 7, 58, 16, 64, 112, 97, 114, 97, 109, 101, 116, 101, 114, 115, 67, 58, 45, 65, 99, 116, 105, 118, 101, 83, 117, 112, 112, 111, 114, 116, 58, 58, 72, 97, 115, 104, 87, 105, 116, 104, 73, 110, 100, 105, 102, 102, 101, 114, 101, 110, 116, 65, 99, 99, 101, 115, 115, 123, 6, 73, 34, 8, 102, 111, 111, 6, 58, 6, 69, 70, 73, 34, 8, 98, 97, 114, 6, 59, 8, 84, 58, 15, 64, 112, 101, 114, 109, 105, 116, 116, 101, 100, 70]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
+  it("loads user-defined objects (marshal_load) as empty hashes", () => {
+    const testCases: [unknown, number[]][] = [
+      [{}, [4, 8, 85, 58, 17, 71, 101, 109, 58, 58, 86, 101, 114, 115, 105, 111, 110, 91, 6, 73, 34, 10, 49, 46, 50, 46, 51, 6, 58, 6, 69, 84]],
+      [{}, [4, 8, 85, 58, 9, 68, 97, 116, 101, 91, 11, 105, 0, 105, 0, 105, 0, 105, 0, 105, 0, 102, 12, 50, 50, 57, 57, 49, 54, 49]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
+  it("loads user-defined objects (_load) as empty hashes", () => {
+    const testCases: [unknown, number[]][] = [
+      [{}, [4, 8, 73, 117, 58, 13, 69, 110, 99, 111, 100, 105, 110, 103, 10, 85, 84, 70, 45, 56, 6, 58, 6, 69, 70]],
+      [{}, [4, 8, 117, 58, 23, 71, 101, 109, 58, 58, 83, 112, 101, 99, 105, 102, 105, 99, 97, 116, 105, 111, 110, 1, 166, 4, 8, 91, 24, 73, 34, 10, 51, 46, 49, 46, 54, 6, 58, 6, 69, 84, 105, 9, 73, 34, 10, 49, 46, 50, 46, 51, 6, 59, 0, 84, 48, 73, 117, 58, 9, 84, 105, 109, 101, 13, 160, 92, 30, 192, 0, 0, 0, 0, 6, 58, 9, 122, 111, 110, 101, 73, 34, 8, 85, 84, 67, 6, 59, 0, 70, 48, 85, 58, 21, 71, 101, 109, 58, 58, 82, 101, 113, 117, 105, 114, 101, 109, 101, 110, 116, 91, 6, 91, 6, 91, 7, 73, 34, 7, 62, 61, 6, 59, 0, 84, 85, 58, 17, 71, 101, 109, 58, 58, 86, 101, 114, 115, 105, 111, 110, 91, 6, 73, 34, 6, 48, 6, 59, 0, 70, 85, 59, 8, 91, 6, 91, 6, 64, 13, 48, 91, 0, 73, 34, 0, 6, 59, 0, 84, 48, 91, 0, 48, 48, 84, 73, 34, 9, 114, 117, 98, 121, 6, 59, 0, 84, 91, 0, 123, 0]],
+      [{}, [4, 8, 117, 58, 15, 66, 105, 103, 68, 101, 99, 105, 109, 97, 108, 31, 50, 55, 58, 48, 46, 49, 50, 51, 52, 53, 54, 55, 56, 57, 49, 50, 51, 52, 53, 54, 55, 56, 57, 101, 49, 56]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
+  it("loads struct instances as objects", () => {
+    const testCases: [unknown, number[]][] = [
+      [{ index: 0, line: 1, column: 1 }, [4, 8, 83, 58, 24, 80, 115, 121, 99, 104, 58, 58, 80, 97, 114, 115, 101, 114, 58, 58, 77, 97, 114, 107, 8, 58, 10, 105, 110, 100, 101, 120, 105, 0, 58, 9, 108, 105, 110, 101, 105, 6, 58, 11, 99, 111, 108, 117, 109, 110, 105, 6]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
+  it("loads classes and modules as empty objects", () => {
+    const testCases: [unknown, number[]][] = [
+      [{}, [4, 8, 77, 11, 79, 98, 106, 101, 99, 116]],
+      [{}, [4, 8, 77, 11, 75, 101, 114, 110, 101, 108]],
+      [{}, [4, 8, 99, 11, 79, 98, 106, 101, 99, 116]],
+      [{}, [4, 8, 109, 11, 75, 101, 114, 110, 101, 108]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
+  it("loads common objects", () => {
+    const testCases: [unknown, number[]][] = [
+      [[[42], [42], [42], [42]], [4, 8, 91, 9, 91, 6, 105, 47, 91, 6, 105, 47, 64, 6, 64, 7]],
+    ];
+    const results = testCases.map(([, input]) => [loadMarshal(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+
+    const tc1 = results[0][0] as [[42], [42], [42], [42]];
+    expect(tc1[0]).toBe(tc1[2]);
+    expect(tc1[1]).toBe(tc1[3]);
+    expect(tc1[0]).not.toBe(tc1[1]);
+  });
+
+  it("loads cyclic references (1)", () => {
+    const obj = loadMarshal(Buffer.from([4, 8, 91, 6, 64, 0]));
+    if (!Array.isArray(obj)) throw new Error("Not an array");
+    expect(obj.length).toBe(1);
+    expect(obj[0]).toBe(obj);
+  });
+
+  it("loads cyclic references (2)", () => {
+    const obj = loadMarshal(Buffer.from([4, 8, 91, 6, 91, 6, 64, 0]));
+    if (!Array.isArray(obj)) throw new Error("Not an array");
+    expect(obj.length).toBe(1);
+    const obj2 = obj[0];
+    if (!Array.isArray(obj2)) throw new Error("Not an array");
+    expect(obj2.length).toBe(1);
+    expect(obj2[0]).toBe(obj);
+
+    expect(obj).not.toBe(obj2);
+  });
+
+  it("loads cyclic references (3)", () => {
+    const obj = loadMarshal(Buffer.from([4, 8, 91, 6, 91, 6, 64, 6]));
+    if (!Array.isArray(obj)) throw new Error("Not an array");
+    expect(obj.length).toBe(1);
+    const obj2 = obj[0];
+    if (!Array.isArray(obj2)) throw new Error("Not an array");
+    expect(obj2.length).toBe(1);
+    expect(obj2[0]).toBe(obj2);
+
+    expect(obj).not.toBe(obj2);
   });
 
   it("fails on EOF", () => {

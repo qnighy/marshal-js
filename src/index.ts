@@ -61,8 +61,8 @@ class Parser {
       // '@': an object link
       case 0x40: {
         const objref = this.readInt();
-        if (objref < 0 || objref >= this.symbols.length) {
-          throw new MarshalError("invalid symbol reference");
+        if (objref < 0 || objref >= this.objects.length) {
+          throw new MarshalError("invalid object reference");
         }
         return this.objects[objref];
       }
@@ -141,7 +141,9 @@ class Parser {
         throw new MarshalError("unimplemented: TYPE_EXTENDED");
       // 'f': an instance of Float
       case 0x66: {
-        return this.entry(parseFloat(this.readString()));
+        const s = this.readString();
+        const f = s === "inf" ? Infinity : s === "-inf" ? -Infinity : s === "nan" ? NaN : parseFloat(s);
+        return this.entry(f);
       }
       // 'i': an instance of Integer (small)
       case 0x69:
