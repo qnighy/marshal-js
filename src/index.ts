@@ -1,9 +1,18 @@
+/**
+ * An exception raised when `loadMarshal` encountered an invalid format.
+ */
 export class MarshalError extends Error {
   constructor(message?: string) {
     super(`Marshal error: ${message}`);
   }
 }
 
+/**
+ * Parses a data exported by Ruby's `Marshal.load`.
+ * @param buf A binary data to parse
+ * @returns the decoded value
+ * @throws {MarshalError} when the data contains an invalid format.
+ */
 export function loadMarshal(buf: Buffer): unknown {
   return new Parser(buf).read();
 }
