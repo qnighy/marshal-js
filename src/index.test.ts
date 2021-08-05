@@ -161,6 +161,15 @@ describe("loadMarshal", () => {
     expect(results).toEqual(testCases);
   });
 
+  it("discards non-string hash keys", () => {
+    const testCases: [unknown, number[]][] = [
+      [{ 3: 3, 4: 4, 5: 5 }, [4, 8, 123, 10, 48, 105, 6, 91, 6, 105, 7, 105, 7, 73, 34, 6, 51, 6, 58, 6, 69, 84, 105, 8, 105, 9, 105, 9, 58, 6, 53, 105, 10]],
+      [{ __ruby_default: 42, 3: 3, 4: 4, 5: 5 }, [4, 8, 125, 10, 48, 105, 6, 91, 6, 105, 7, 105, 7, 73, 34, 6, 51, 6, 58, 6, 69, 84, 105, 8, 105, 9, 105, 9, 58, 6, 53, 105, 10, 105, 47]],
+    ];
+    const results = testCases.map(([, input]) => [Marshal.parse(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
   it("loads symbols", () => {
     const testCases: [unknown, number[]][] = [
       ["a", [4, 8, 58, 6, 97]],
@@ -246,6 +255,14 @@ describe("loadMarshal", () => {
   it("loads struct instances as objects", () => {
     const testCases: [unknown, number[]][] = [
       [{ index: 0, line: 1, column: 1 }, [4, 8, 83, 58, 24, 80, 115, 121, 99, 104, 58, 58, 80, 97, 114, 115, 101, 114, 58, 58, 77, 97, 114, 107, 8, 58, 10, 105, 110, 100, 101, 120, 105, 0, 58, 9, 108, 105, 110, 101, 105, 6, 58, 11, 99, 111, 108, 117, 109, 110, 105, 6]],
+    ];
+    const results = testCases.map(([, input]) => [Marshal.parse(Buffer.from(input)), input]);
+    expect(results).toEqual(testCases);
+  });
+
+  it("discards non-string struct keys", () => {
+    const testCases: [unknown, number[]][] = [
+      [{ index: 0, line: 1, column: 1 }, [4, 8, 83, 58, 24, 80, 115, 121, 99, 104, 58, 58, 80, 97, 114, 115, 101, 114, 58, 58, 77, 97, 114, 107, 9, 58, 10, 105, 110, 100, 101, 120, 105, 0, 58, 9, 108, 105, 110, 101, 105, 6, 58, 11, 99, 111, 108, 117, 109, 110, 105, 6, 48, 105, 47]],
     ];
     const results = testCases.map(([, input]) => [Marshal.parse(Buffer.from(input)), input]);
     expect(results).toEqual(testCases);

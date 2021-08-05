@@ -110,8 +110,10 @@ class Parser {
         for (let i = 0; i < length; i++) {
           const key = this.readAny();
           const value = this.readAny();
-	  // @ts-expect-error
-          struct[key.toString()] = value;
+          // Discard non-String keys
+          if (typeof key === "number" || typeof key === "string") {
+            struct[key] = value;
+          }
         }
         return struct;
       }
@@ -203,8 +205,10 @@ class Parser {
         for (let i = 0; i < length; i++) {
           const key = this.readAny();
           const value = this.readAny();
-	  // @ts-expect-error
-          hash[key.toString()] = value;
+          // Discard non-String keys
+          if (typeof key === "number" || typeof key === "string") {
+            hash[key.toString()] = value;
+          }
         }
         return hash;
       }
@@ -215,8 +219,10 @@ class Parser {
         for (let i = 0; i < length; i++) {
           const key = this.readAny();
           const value = this.readAny();
-	  // @ts-expect-error
-          hash[key.toString()] = value;
+          // Discard non-String keys
+          if (typeof key === "number" || typeof key === "string") {
+            hash[key.toString()] = value;
+          }
         }
         hash['__ruby_default'] = this.readAny();
         return hash;
