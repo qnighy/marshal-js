@@ -12,6 +12,10 @@
     "node": "./dist/index.js",
     "default": "./dist/esm/index.js"
   },
+  "files": [
+    "dist/**",
+    "src/index.ts"
+  ],
   "scripts": {
     "build": "$npm_execpath run build:babel && $npm_execpath run build:babel:esm && $npm_execpath run build:tsc",
     "build:babel": "babel src --out-dir dist --extensions \".ts\" --ignore \"src/**/*.test.ts\"",
