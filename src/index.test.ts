@@ -307,12 +307,13 @@ describe("loadMarshal", () => {
 
   it("fails on EOF", () => {
     const testCases: [number[], string][] = [
-      [[], "Marshal error: unexpected EOF"],
-      [[4], "Marshal error: unexpected EOF"],
-      [[4, 8], "Marshal error: unexpected EOF"],
-      [[4, 8, 105], "Marshal error: unexpected EOF"],
-      [[4, 8, 105, 1], "Marshal error: unexpected EOF"],
-      [[4, 8, 105, 2, 0], "Marshal error: unexpected EOF"],
+      [[], "Marshal error: marshal data too short"],
+      [[4], "Marshal error: marshal data too short"],
+      [[4, 8], "Marshal error: marshal data too short"],
+      [[4, 8, 105], "Marshal error: marshal data too short"],
+      [[4, 8, 105, 1], "Marshal error: marshal data too short"],
+      [[4, 8, 105, 2, 0], "Marshal error: marshal data too short"],
+      [[4, 8, 34, 6], "Marshal error: marshal data too short"],
     ];
     const results = testCases.map(([input]) => {
       try {
@@ -340,9 +341,73 @@ describe("loadMarshal", () => {
 
   it("fails on incompatible versions", () => {
     const testCases: [number[], string][] = [
-      [[4, 9, 48], "Marshal error: unexpected version: 4.9"],
-      [[5, 8, 48], "Marshal error: unexpected version: 5.8"],
-      [[3, 8, 48], "Marshal error: unexpected version: 3.8"],
+      [[4, 9, 48], "Marshal error: incompatible marshal file format (can't be read): format version 4.8 required; 4.9 given"],
+      [[5, 8, 48], "Marshal error: incompatible marshal file format (can't be read): format version 4.8 required; 5.8 given"],
+      [[3, 8, 48], "Marshal error: incompatible marshal file format (can't be read): format version 4.8 required; 3.8 given"],
+    ];
+    const results = testCases.map(([input]) => {
+      try {
+        loadMarshal(Buffer.from(input));
+        return [input, "--SUCCESS--"];
+      } catch(err) {
+        if (err instanceof MarshalError) {
+          return [input, err.message];
+        }
+        throw err;
+      }
+    });
+    expect(results).toEqual(testCases);
+  })
+
+  it("fails on unknown tags", () => {
+    const testCases: [number[], string][] = [
+      [[4, 8, 0], "Marshal error: dump format error(0x0)"],
+      [[4, 8, 42], "Marshal error: dump format error(0x2a)"],
+      [[4, 8, 100], "Marshal error: unimplemented: TYPE_DATA"],
+      [[4, 8, 101], "Marshal error: unimplemented: TYPE_EXTENDED"],
+    ];
+    const results = testCases.map(([input]) => {
+      try {
+        loadMarshal(Buffer.from(input));
+        return [input, "--SUCCESS--"];
+      } catch(err) {
+        if (err instanceof MarshalError) {
+          return [input, err.message];
+        }
+        throw err;
+      }
+    });
+    expect(results).toEqual(testCases);
+  })
+
+  it("fails on reference error", () => {
+    const testCases: [number[], string][] = [
+      [[4, 8, 59, 0], "Marshal error: bad symbol"],
+      [[4, 8, 64, 0], "Marshal error: dump format error (unlinked)"],
+    ];
+    const results = testCases.map(([input]) => {
+      try {
+        loadMarshal(Buffer.from(input));
+        return [input, "--SUCCESS--"];
+      } catch(err) {
+        if (err instanceof MarshalError) {
+          return [input, err.message];
+        }
+        throw err;
+      }
+    });
+    expect(results).toEqual(testCases);
+  })
+
+  it("fails on negative lengths", () => {
+    const testCases: [number[], string][] = [
+      [[4, 8, 108, 43, 250], "Marshal error: negative string size (or size too big)"],
+      [[4, 8, 34, 250], "Marshal error: negative string size (or size too big)"],
+      [[4, 8, 58, 250], "Marshal error: negative string size (or size too big)"],
+      [[4, 8, 91, 250], "Marshal error: negative array size (or size too big)"],
+      [[4, 8, 123, 250], "Marshal error: negative hash size (or size too big)"],
+      [[4, 8, 125, 250], "Marshal error: negative hash size (or size too big)"],
+      [[4, 8, 83, 58, 17, 80, 114, 111, 99, 101, 115, 115, 58, 58, 84, 109, 115, 250], "Marshal error: negative struct size (or size too big)"],
     ];
     const results = testCases.map(([input]) => {
       try {

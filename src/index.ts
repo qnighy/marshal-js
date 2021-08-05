@@ -23,7 +23,7 @@ class Parser {
     const major = this.readByte();
     const minor = this.readByte();
     if (major !== 4 || minor > 8) {
-      throw new MarshalError(`unexpected version: ${major}.${minor}`);
+      throw new MarshalError(`incompatible marshal file format (can't be read): format version 4.8 required; ${major}.${minor} given`);
     }
     return this.readAny();
   }
@@ -54,7 +54,7 @@ class Parser {
       case 0x3B: {
         const symref = this.readInt();
         if (symref < 0 || symref >= this.symbols.length) {
-          throw new MarshalError("invalid symbol reference");
+          throw new MarshalError("bad symbol");
         }
         return this.symbols[symref];
       }
@@ -62,7 +62,7 @@ class Parser {
       case 0x40: {
         const objref = this.readInt();
         if (objref < 0 || objref >= this.objects.length) {
-          throw new MarshalError("invalid object reference");
+          throw new MarshalError("dump format error (unlinked)");
         }
         return this.objects[objref];
       }
@@ -78,7 +78,7 @@ class Parser {
       // 'I': add instance variables
       case 0x49: {
         const obj = this.readAny();
-        const length = this.readLength();
+        const length = this.readInt();
         for (let i = 0; i < length; i++) {
           // Discard instance variables
           this.readAny();
@@ -96,7 +96,7 @@ class Parser {
       case 0x53: {
         // Discard class name
         this.readAny();
-        const length = this.readLength();
+        const length = this.readLength("struct");
         const struct: Record<string, unknown> = this.entry({});
         for (let i = 0; i < length; i++) {
           const key = this.readAny();
@@ -120,7 +120,7 @@ class Parser {
       }
       // '[': an instance of Array
       case 0x5B: {
-        const length = this.readLength();
+        const length = this.readLength("array");
         const arr: unknown[] = this.entry([]);
         for (let i = 0; i < length; i++) {
           arr.push(this.readAny());
@@ -151,12 +151,9 @@ class Parser {
       // 'l': an instance of Integer (large)
       case 0x6C: {
         const signChar = this.readByte();
-        if (signChar !== 0x2B && signChar !== 0x2D) {
-          throw new MarshalError("invalid sign");
-        }
-        const length = this.readLength() * 2;
+        const length = this.readLength("string") * 2;
         let sum = 0;
-        let magnitude = signChar === 0x2B ? 1 : -1;
+        let magnitude = signChar === 0x2D ? -1 : 1;
         for (let i = 0; i < length; i++) {
           sum += this.readByte() * magnitude;
           magnitude *= 256;
@@ -174,7 +171,7 @@ class Parser {
         // Discard class name
         this.readAny();
         const obj = this.entry({});
-        const length = this.readLength();
+        const length = this.readInt();
         for (let i = 0; i < length; i++) {
           // Discard instance variables
           this.readAny();
@@ -192,7 +189,7 @@ class Parser {
       }
       // '{': an instance of Hash (without default value)
       case 0x7B: {
-        const length = this.readLength();
+        const length = this.readLength("hash");
         const hash: Record<string, unknown> = this.entry({});
         for (let i = 0; i < length; i++) {
           const key = this.readAny();
@@ -204,7 +201,7 @@ class Parser {
       }
       // '}': an instance of Hash (with default value)
       case 0x7D: {
-        const length = this.readLength();
+        const length = this.readLength("hash");
         const hash: Record<string, unknown> = this.entry({});
         for (let i = 0; i < length; i++) {
           const key = this.readAny();
@@ -216,14 +213,14 @@ class Parser {
         return hash;
       }
       default:
-        throw new MarshalError(`unexpected tag: ${tag}`);
+        throw new MarshalError(`dump format error(0x${tag.toString(16)})`);
     }
   }
 
-  private readLength(): number {
+  private readLength(msg: string): number {
     const length = this.readInt();
     if (length < 0) {
-      throw new MarshalError("negative length");
+      throw new MarshalError(`negative ${msg} size (or size too big)`);
     }
     return length;
   }
@@ -255,7 +252,7 @@ class Parser {
 
   private readByte(): number {
     if (this.index >= this.buf.byteLength) {
-      throw new MarshalError("unexpected EOF");
+      throw new MarshalError("marshal data too short");
     }
     const byte = this.buf.readUInt8(this.index);
     this.index++;
@@ -267,9 +264,9 @@ class Parser {
   }
 
   private readBytes(): Buffer {
-    const length = this.readInt();
+    const length = this.readLength("string");
     if (this.index + length > this.buf.byteLength) {
-      throw new MarshalError("unexpected EOF");
+      throw new MarshalError("marshal data too short");
     }
     const bytes = this.buf.slice(this.index, this.index + length);
     this.index += length;
