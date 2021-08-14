@@ -14,7 +14,9 @@
   },
   "files": [
     "dist/**",
-    "src/index.ts"
+    "src/error.ts",
+    "src/index.ts",
+    "src/parse.ts"
   ],
   "scripts": {
     "build": "$npm_execpath run build:babel && $npm_execpath run build:babel:esm && $npm_execpath run build:tsc",
