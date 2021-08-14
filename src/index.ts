@@ -114,7 +114,12 @@ class Parser {
           const value = this.readAny();
           // Discard non-String keys
           if (typeof key === "number" || typeof key === "string") {
-            struct[key] = value;
+            Object.defineProperty(struct, key, {
+              value,
+              writable: true,
+              configurable: true,
+              enumerable: true,
+            });
           }
         }
         return struct;
@@ -216,7 +221,12 @@ class Parser {
           const value = this.readAny();
           // Discard non-String keys
           if (typeof key === "number" || typeof key === "string") {
-            hash[key.toString()] = value;
+            Object.defineProperty(hash, key, {
+              value,
+              writable: true,
+              configurable: true,
+              enumerable: true,
+            });
           }
         }
         return hash;
@@ -230,7 +240,12 @@ class Parser {
           const value = this.readAny();
           // Discard non-String keys
           if (typeof key === "number" || typeof key === "string") {
-            hash[key.toString()] = value;
+            Object.defineProperty(hash, key, {
+              value,
+              writable: true,
+              configurable: true,
+              enumerable: true,
+            });
           }
         }
         hash["__ruby_default"] = this.readAny();
