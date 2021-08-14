@@ -1,7 +1,7 @@
 {
   "name": "@qnighy/marshal",
   "description": "Decoder for Ruby's Marshal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "homepage": "https://github.com/qnighy/marshal-js",
   "author": "Masaki Hara <ackie.h.gmai@gmail.com>",
