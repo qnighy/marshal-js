@@ -16,6 +16,7 @@
     "dist/**",
     "src/error.ts",
     "src/index.ts",
+    "src/marshal-object.ts",
     "src/parse.ts"
   ],
   "scripts": {
