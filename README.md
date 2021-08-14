@@ -11,25 +11,22 @@ yarn add @qnighy/marshal
 ```
 
 ```javascript
-import * as Marshal from "@qnighy/marshal";
+import { Marshal } from "@qnighy/marshal";
 // OR
-const Marshal = require("@qnighy/marshal");
+const { Marshal } = require("@qnighy/marshal");
 
-const buf = Buffer.from(
-  [
-    4, 8, 123, 7, 58, 9, 110, 97, 109, 101,
-    73, 34, 8, 102, 111, 111, 6, 58, 6, 69,
-    84, 58, 12, 110, 117, 109, 98, 101, 114, 115,
-    91, 8, 105, 6, 105, 7, 105, 8,
-  ]
-);
+const buf = Buffer.from([
+  4, 8, 123, 7, 58, 9, 110, 97, 109, 101, 73, 34, 8, 102, 111, 111, 6, 58, 6,
+  69, 84, 58, 12, 110, 117, 109, 98, 101, 114, 115, 91, 8, 105, 6, 105, 7, 105,
+  8,
+]);
 const data = Marshal.parse(buf);
 // => { name: 'foo', numbers: [ 1, 2, 3 ] }
 ```
 
 ## API
 
-### `function parse`
+### `Marshal.parse`
 
 Parses a data exported by Ruby's `Marshal.load`.
 
@@ -43,7 +40,11 @@ Parses a data exported by Ruby's `Marshal.load`.
   - `MarshalError` <br>
     when the data contains an invalid format.
 
-### `class MarshalError`
+### `parse`
+
+Same as `Marshal.parse`.
+
+### `MarshalError`
 
 An exception raised when `loadMarshal` encountered an invalid format.
 
