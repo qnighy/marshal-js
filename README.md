@@ -15,7 +15,7 @@ import { Marshal } from "@qnighy/marshal";
 // OR
 const { Marshal } = require("@qnighy/marshal");
 
-const buf = Buffer.from([
+const buf = Uint8Array.from([
   4, 8, 123, 7, 58, 9, 110, 97, 109, 101, 73, 34, 8, 102, 111, 111, 6, 58, 6,
   69, 84, 58, 12, 110, 117, 109, 98, 101, 114, 115, 91, 8, 105, 6, 105, 7, 105,
   8,
@@ -31,7 +31,7 @@ const data = Marshal.parse(buf);
 Parses a data exported by Ruby's `Marshal.load`.
 
 - Parameters
-  - `buf`: `Buffer` <br>
+  - `buf`: `Uint8Array` <br>
     a binary data to parse
 - Returns
   - `unknown` <br>
