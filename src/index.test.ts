@@ -2,14 +2,14 @@ import { describe, expect, it } from "@jest/globals";
 import { MarshalError, parse } from "./index";
 
 describe("parse", () => {
-  it("parses a Buffer", () => {
-    expect(parse(Buffer.from([4, 8, 105, 47]))).toBe(42);
+  it("parses a Uint8Array", () => {
+    expect(parse(Uint8Array.from([4, 8, 105, 47]))).toBe(42);
   });
 });
 
 describe("Marshal.parse", () => {
-  it("parses a Buffer", () => {
-    expect(parse(Buffer.from([4, 8, 105, 47]))).toBe(42);
+  it("parses a Uint8Array", () => {
+    expect(parse(Uint8Array.from([4, 8, 105, 47]))).toBe(42);
   });
 });
 

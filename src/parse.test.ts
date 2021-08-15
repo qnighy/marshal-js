@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
 import { MarshalError } from "./error";
 import { parse } from "./parse";
 
@@ -10,7 +10,7 @@ describe("parse", () => {
       [true, [4, 8, 84]],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -60,7 +60,7 @@ describe("parse", () => {
       [-123456789, [4, 8, 105, 252, 235, 50, 164, 248]],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -76,7 +76,7 @@ describe("parse", () => {
       [-123456789012345, [4, 8, 108, 45, 8, 121, 223, 13, 134, 72, 112]],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -96,7 +96,7 @@ describe("parse", () => {
       [NaN, [4, 8, 102, 8, 110, 97, 110]],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -115,7 +115,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -139,7 +139,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -155,7 +155,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -168,7 +168,7 @@ describe("parse", () => {
       [{ 1: 2, 3: 4 }, [4, 8, 123, 7, 105, 6, 105, 7, 105, 8, 105, 9]],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -184,7 +184,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -208,7 +208,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -222,7 +222,7 @@ describe("parse", () => {
       ["あ", [4, 8, 73, 58, 8, 227, 129, 130, 6, 58, 6, 69, 84]],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -252,7 +252,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -283,7 +283,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -329,7 +329,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -377,7 +377,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -401,7 +401,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -425,7 +425,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -467,7 +467,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -486,7 +486,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -505,7 +505,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -519,7 +519,7 @@ describe("parse", () => {
       [{}, [4, 8, 109, 11, 75, 101, 114, 110, 101, 108]],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -533,7 +533,7 @@ describe("parse", () => {
       ],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -545,14 +545,14 @@ describe("parse", () => {
   });
 
   it("loads cyclic references (1)", () => {
-    const obj = parse(Buffer.from([4, 8, 91, 6, 64, 0]));
+    const obj = parse(Uint8Array.from([4, 8, 91, 6, 64, 0]));
     if (!Array.isArray(obj)) throw new Error("Not an array");
     expect(obj.length).toBe(1);
     expect(obj[0]).toBe(obj);
   });
 
   it("loads cyclic references (2)", () => {
-    const obj = parse(Buffer.from([4, 8, 91, 6, 91, 6, 64, 0]));
+    const obj = parse(Uint8Array.from([4, 8, 91, 6, 91, 6, 64, 0]));
     if (!Array.isArray(obj)) throw new Error("Not an array");
     expect(obj.length).toBe(1);
     const obj2: unknown = obj[0];
@@ -564,7 +564,7 @@ describe("parse", () => {
   });
 
   it("loads cyclic references (3)", () => {
-    const obj = parse(Buffer.from([4, 8, 91, 6, 91, 6, 64, 6]));
+    const obj = parse(Uint8Array.from([4, 8, 91, 6, 91, 6, 64, 6]));
     if (!Array.isArray(obj)) throw new Error("Not an array");
     expect(obj.length).toBe(1);
     const obj2: unknown = obj[0];
@@ -573,6 +573,68 @@ describe("parse", () => {
     expect(obj2[0]).toBe(obj2);
 
     expect(obj).not.toBe(obj2);
+  });
+
+  it("parses a Buffer", () => {
+    const testCases: [unknown, number[]][] = [
+      [true, [4, 8, 84]],
+      ["foo", [4, 8, 73, 34, 8, 102, 111, 111, 6, 58, 6, 69, 84]],
+      [
+        "ほげ",
+        [4, 8, 73, 34, 11, 227, 129, 187, 227, 129, 146, 6, 58, 6, 69, 84],
+      ],
+    ];
+    const results = testCases.map(([, input]) => [
+      parse(Buffer.from(input)),
+      input,
+    ]);
+    expect(results).toEqual(testCases);
+  });
+
+  describe("without TextDecoder", () => {
+    let textDecoderOld: typeof TextDecoder;
+    beforeEach(() => {
+      textDecoderOld = TextDecoder;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      global.TextDecoder = undefined;
+    });
+    afterEach(() => {
+      global.TextDecoder = textDecoderOld;
+    });
+
+    it("parses a Uint8Array", () => {
+      const testCases: [unknown, number[]][] = [
+        [true, [4, 8, 84]],
+        ["foo", [4, 8, 73, 34, 8, 102, 111, 111, 6, 58, 6, 69, 84]],
+      ];
+      const results = testCases.map(([, input]) => [
+        parse(Uint8Array.from(input)),
+        input,
+      ]);
+      expect(results).toEqual(testCases);
+    });
+
+    it("parses a Buffer", () => {
+      const testCases: [unknown, number[]][] = [
+        [true, [4, 8, 84]],
+        ["foo", [4, 8, 73, 34, 8, 102, 111, 111, 6, 58, 6, 69, 84]],
+      ];
+      const results = testCases.map(([, input]) => [
+        parse(Buffer.from(input)),
+        input,
+      ]);
+      expect(results).toEqual(testCases);
+    });
+
+    it("errors on UTF-8", () => {
+      const data = [
+        4, 8, 73, 34, 11, 227, 129, 187, 227, 129, 146, 6, 58, 6, 69, 84,
+      ];
+      expect(() => parse(Uint8Array.from(data))).toThrowError(
+        "TextDecoder is not a constructor"
+      );
+    });
   });
 
   it("fails on EOF", () => {
@@ -587,7 +649,7 @@ describe("parse", () => {
     ];
     const results = testCases.map(([input]) => [
       input,
-      getParseError(Buffer.from(input)),
+      getParseError(Uint8Array.from(input)),
     ]);
     expect(results).toEqual(testCases);
   });
@@ -599,7 +661,7 @@ describe("parse", () => {
       [true, [4, 5, 84]],
     ];
     const results = testCases.map(([, input]) => [
-      parse(Buffer.from(input)),
+      parse(Uint8Array.from(input)),
       input,
     ]);
     expect(results).toEqual(testCases);
@@ -622,7 +684,7 @@ describe("parse", () => {
     ];
     const results = testCases.map(([input]) => [
       input,
-      getParseError(Buffer.from(input)),
+      getParseError(Uint8Array.from(input)),
     ]);
     expect(results).toEqual(testCases);
   });
@@ -636,7 +698,7 @@ describe("parse", () => {
     ];
     const results = testCases.map(([input]) => [
       input,
-      getParseError(Buffer.from(input)),
+      getParseError(Uint8Array.from(input)),
     ]);
     expect(results).toEqual(testCases);
   });
@@ -648,7 +710,7 @@ describe("parse", () => {
     ];
     const results = testCases.map(([input]) => [
       input,
-      getParseError(Buffer.from(input)),
+      getParseError(Uint8Array.from(input)),
     ]);
     expect(results).toEqual(testCases);
   });
@@ -680,13 +742,13 @@ describe("parse", () => {
     ];
     const results = testCases.map(([input]) => [
       input,
-      getParseError(Buffer.from(input)),
+      getParseError(Uint8Array.from(input)),
     ]);
     expect(results).toEqual(testCases);
   });
 });
 
-function getParseError(buf: Buffer): string {
+function getParseError(buf: Uint8Array): string {
   try {
     parse(buf);
     return "--SUCCESS--";

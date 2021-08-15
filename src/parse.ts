@@ -6,7 +6,7 @@ import { MarshalError } from "./error";
  * @returns the decoded value
  * @throws {MarshalError} when the data contains an invalid format.
  */
-export function parse(buf: Buffer): unknown {
+export function parse(buf: Uint8Array): unknown {
   return new Parser(buf).read();
 }
 
@@ -15,9 +15,7 @@ class Parser {
 
   private objects: unknown[] = [];
 
-  constructor(private buf: Buffer, private index = 0) {
-    this.buf = Buffer.from(this.buf);
-  }
+  constructor(private buf: Uint8Array, private index = 0) {}
 
   public read(): unknown {
     this.symbols = [];
@@ -286,21 +284,25 @@ class Parser {
     if (this.index >= this.buf.byteLength) {
       throw new MarshalError("marshal data too short");
     }
-    const byte = this.buf.readUInt8(this.index);
+    const byte = this.buf[this.index];
     this.index++;
     return byte;
   }
 
   private readString(): string {
-    return this.readBytes().toString("utf-8");
+    const bytes = this.readBytes();
+    if (typeof TextDecoder !== "function" && bytes.every((x) => x < 128)) {
+      return String.fromCharCode(...Array.from(bytes));
+    }
+    return new TextDecoder().decode(bytes);
   }
 
-  private readBytes(): Buffer {
+  private readBytes(): Uint8Array {
     const length = this.readLength("string");
     if (this.index + length > this.buf.byteLength) {
       throw new MarshalError("marshal data too short");
     }
-    const bytes = this.buf.slice(this.index, this.index + length);
+    const bytes = this.buf.subarray(this.index, this.index + length);
     this.index += length;
     return bytes;
   }
